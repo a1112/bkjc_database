@@ -1,12 +1,14 @@
-from bkjc_database.NerCarDataBase import SqlTool
+from sqlalchemy import or_, and_
+
+from bkjc_database import SqlTool
 
 from bkjc_database.NerCarDataBase.sqlserver import ClientDefectDB, SteelRecord, ConfigCenter
-from bkjc_database.interface.DataBaseInterFace import DataBaseInterFace
+from bkjc_database.property.DataBaseInterFace import DataBaseInterFace
 
 
 class SqlServer_3d0(DataBaseInterFace):
     """
-    A class representing a SQL Server database interface.
+    A class representing a SQL Server database property.
 
     This class provides methods to interact with a SQL Server database and retrieve steel records.
 
@@ -31,7 +33,7 @@ class SqlServer_3d0(DataBaseInterFace):
     def isSqlServer(self):
         return True
 
-    def getSteelByNum(self, number, defectOnly, startID=None):
+    def getSteelByNum(self, number, defectOnly=False, startID=None):
         """
         Retrieve a specified number of steel records.
 
@@ -46,25 +48,23 @@ class SqlServer_3d0(DataBaseInterFace):
         Raises:
             Exception: If an error occurs during the retrieval process.
         """
-        session = SteelRecord.Session()
-        try:
-            que = session.query(SteelRecord.Steel, SteelRecord.SteelID).join(
-                SteelRecord.SteelID, SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID, isouter=True
-            )
-            if startID:
-                que = que.filter(SteelRecord.Steel.ID > startID)
-            if not defectOnly:
-                res = [[i_, j_] for i_, j_ in que.order_by(SteelRecord.Steel.ID.desc())[0:number]]
-            else:
-                res = [[i_, j_] for i_, j_ in que.filter(
-                    or_(SteelRecord.Steel.TopDefectNum > 0, SteelRecord.Steel.BottomDefectNum > 0)
-                ).order_by(SteelRecord.Steel.ID.desc())[0:number]]
-            return res
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        with SteelRecord.Session() as session:
+            try:
+                que = session.query(SteelRecord.Steel, SteelRecord.SteelID).join(
+                    SteelRecord.SteelID, SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID, isouter=True
+                )
+                if startID:
+                    que = que.filter(SteelRecord.Steel.ID > startID)
+                if not defectOnly:
+                    res = [[i_, j_] for i_, j_ in que.order_by(SteelRecord.Steel.ID.desc())[0:number]]
+                else:
+                    res = [[i_, j_] for i_, j_ in que.filter(
+                        or_(SteelRecord.Steel.TopDefectNum > 0, SteelRecord.Steel.BottomDefectNum > 0)
+                    ).order_by(SteelRecord.Steel.ID.desc())[0:number]]
+                return res
+            except:
+                session.rollback()
+                raise
 
     def getSteelById(self, steelId):
             """
@@ -81,20 +81,18 @@ class SqlServer_3d0(DataBaseInterFace):
             Raises:
                 Exception: If an error occurs during the retrieval process.
             """
-            session = SteelRecord.Session()
-            try:
-                que = session.query(SteelRecord.Steel,
-                                    SteelRecord.SteelID).join(SteelRecord.SteelID,
-                                                              SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
-                                                              isouter=True)
-                que = que.filter(steelId == SteelRecord.Steel.ID)
-                return [[i_, j_] for i_, j_ in que.order_by(
-                    SteelRecord.Steel.ID.desc())[0:10]]
-            except:
-                session.rollback()
-                raise
-            finally:
-                session.close()
+            with SteelRecord.Session() as session:
+                try:
+                    que = session.query(SteelRecord.Steel,
+                                        SteelRecord.SteelID).join(SteelRecord.SteelID,
+                                                                  SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
+                                                                  isouter=True)
+                    que = que.filter(steelId == SteelRecord.Steel.ID)
+                    return [[i_, j_] for i_, j_ in que.order_by(
+                        SteelRecord.Steel.ID.desc())[0:10]]
+                except:
+                    session.rollback()
+                    raise
 
     def getSteelBySeqNo(self, seqNo):
         """
@@ -109,20 +107,18 @@ class SqlServer_3d0(DataBaseInterFace):
         Raises:
             Exception: If an error occurs during the database operation.
         """
-        session = SteelRecord.Session()
-        try:
-            que = session.query(SteelRecord.Steel,
-                                SteelRecord.SteelID).join(SteelRecord.SteelID,
-                                                          SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
-                                                          isouter=True)
-            que = que.filter(seqNo == SteelRecord.Steel.SequeceNo)
-            return [[i_, j_] for i_, j_ in que.order_by(
-                SteelRecord.Steel.ID.desc())[0:500]]
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        with SteelRecord.Session() as session:
+            try:
+                que = session.query(SteelRecord.Steel,
+                                    SteelRecord.SteelID).join(SteelRecord.SteelID,
+                                                              SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
+                                                              isouter=True)
+                que = que.filter(seqNo == SteelRecord.Steel.SequeceNo)
+                return [[i_, j_] for i_, j_ in que.order_by(
+                    SteelRecord.Steel.ID.desc())[0:500]]
+            except:
+                session.rollback()
+                raise
 
     def getSteelBySteelNo(self, steelNo):
         """
@@ -134,20 +130,18 @@ class SqlServer_3d0(DataBaseInterFace):
         Returns:
             list: A list of steel records matching the given steel number.
         """
-        session = SteelRecord.Session()
-        try:
-            que = session.query(SteelRecord.Steel,
-                                SteelRecord.SteelID).join(SteelRecord.SteelID,
-                                                          SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
-                                                          isouter=True)
-            que = que.filter(SteelRecord.Steel.SteelID.like(f"%{steelNo}%"))
-            return [[i_, j_] for i_, j_ in que.order_by(
-                SteelRecord.Steel.ID.desc())[0:500]]
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        with SteelRecord.Session() as session:
+            try:
+                que = session.query(SteelRecord.Steel,
+                                    SteelRecord.SteelID).join(SteelRecord.SteelID,
+                                                              SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
+                                                              isouter=True)
+                que = que.filter(SteelRecord.Steel.SteelID.like(f"%{steelNo}%"))
+                return [[i_, j_] for i_, j_ in que.order_by(
+                    SteelRecord.Steel.ID.desc())[0:500]]
+            except:
+                session.rollback()
+                raise
 
     def getSteelByDate(self, fromDate, toDate):
         """
@@ -163,22 +157,20 @@ class SqlServer_3d0(DataBaseInterFace):
         Raises:
             Exception: If an error occurs during the retrieval process.
         """
-        session = SteelRecord.Session()
-        try:
-            que = SteelRecord.session.query(SteelRecord.Steel,
-                                            SteelRecord.SteelID).join(SteelRecord.SteelID,
-                                                                      SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
-                                                                      isouter=True)
-            que = que.filter(
-                and_(SteelRecord.Steel.TopDetectTime >= fromDate, SteelRecord.Steel.TopDetectTime <= toDate))
-            llist = [[i_, j_] for i_, j_ in que.order_by(
-                SteelRecord.Steel.ID.desc())[0:500]]
-            return llist
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        with SteelRecord.Session() as session:
+            try:
+                que = session.query(SteelRecord.Steel,
+                                                SteelRecord.SteelID).join(SteelRecord.SteelID,
+                                                                          SteelRecord.SteelID.ID == SteelRecord.Steel.SteelID,
+                                                                          isouter=True)
+                que = que.filter(
+                    and_(SteelRecord.Steel.TopDetectTime >= fromDate, SteelRecord.Steel.TopDetectTime <= toDate))
+                llist = [[i_, j_] for i_, j_ in que.order_by(
+                    SteelRecord.Steel.ID.desc())[0:500]]
+                return llist
+            except:
+                session.rollback()
+                raise
 
     def getDefectBySeqNo(self, seqNo):
         """
@@ -193,46 +185,43 @@ class SqlServer_3d0(DataBaseInterFace):
         reInfo = {"upCount": 0, "downCount": 0, "upCameraList": ConfigCenter.upCameraIdList,
                   "downCameraList": ConfigCenter.underCameraIdList}
         for index, clientDefect in enumerate(ClientDefectDB.allCamera):
-            session = clientDefect.Session()
-            try:
-                reInfo[index + 1] = {}
-                reInfo[index + 1]["defect"] = session.query(ClientDefectDB.Defect).filter(
-                    ClientDefectDB.Defect.SteelNo == seqNo).all()
-                reInfo[index + 1]["count"] = len(reInfo[index + 1]["defect"])
-                # reInfo[index + 1]["count"] = clientDefect.session.query(ClientDefectDB.Defect).filter(
-                #     ClientDefectDB.Defect.SteelNo == seqNo).count()
-                reInfo[index + 1]["is_up"] = clientDefect.is_up
-                if reInfo[index + 1]["is_up"]:
-                    reInfo["upCount"] += reInfo[index + 1]["count"]
-                else:
-                    reInfo["downCount"] += reInfo[index + 1]["count"]
-            except:
-                session.rollback()
-                raise
-            finally:
-                session.close()
+            with clientDefect.Session() as session:
+                try:
+                    reInfo[index + 1] = {}
+                    reInfo[index + 1]["defect"] = session.query(ClientDefectDB.Defect).filter(
+                        ClientDefectDB.Defect.SteelNo == seqNo).all()
+                    reInfo[index + 1]["count"] = len(reInfo[index + 1]["defect"])
+                    reInfo[index + 1]["is_up"] = clientDefect.is_up
+                    if reInfo[index + 1]["is_up"]:
+                        reInfo["upCount"] += reInfo[index + 1]["count"]
+                    else:
+                        reInfo["downCount"] += reInfo[index + 1]["count"]
+                except:
+                    session.rollback()
+                    raise
         return reInfo
 
     def getDefectClass(self):
-        session = SteelRecord.Session()
-        try:
-            defectClass = ConfigCenter.session.query(ConfigCenter.DefectClass).all()
-            return defectClass
-        except:
-            session.rollback()
-            raise
-        finally:
-            session.close()
+        with ConfigCenter.Session() as session:
+            try:
+                defectClass = session.query(ConfigCenter.DefectClass).all()
+                return defectClass
+            except:
+                session.rollback()
 
     def getCameraList(self):
         return [ConfigCenter.upCameraIdList, ConfigCenter.underCameraIdList]
 
     def getDefectItem(self,cameraId,defectId):
-        item = ConfigCenter.session.query(ConfigCenter.DefectClass).all()
-        return item
+        with ConfigCenter.Session() as session:
+            try:
+                item = session.query(ConfigCenter.DefectClass).all()
+                return item
+            except:
+                session.rollback()
 
     def getGradeInfo(self,seqNo):
-        gi= SteelRecord.getGradeInfoBy(seqNo)
+        gi = SteelRecord.getGradeInfoBy(seqNo)
         if gi:
             gi.SteelUse = gi.SteelUse.encode("latin-1").decode("GBK", "ignore")
             gi.Quality = gi.Quality.encode("latin-1").decode("GBK", "ignore")
@@ -249,18 +238,19 @@ class SqlServer_3d0(DataBaseInterFace):
         Returns:
             int or None: The sequence ID of the steel record if found, None otherwise.
         """
-        from bkjc_database.NerCarDataBase.sqlserver import SteelRecord
-        steelNo = steelNo.replace("sp", "#")
-        steels = SteelRecord.session.query(SteelRecord.Steel).filter(
-            SteelRecord.Steel.SteelID.like("%{}%".format(steelNo))).all()
-        if steels:
-            if len(steels) > 1:
-                print(" ID {} 不唯一".format(steelNo))
-            steel = steels[index]
-            return steel.SequeceNo
-        print("{} 无记录".format(steelNo))
-        return None
-
+        with SteelRecord.Session() as session:
+            try:
+                steel = session.query(SteelRecord.Steel).filter(
+                    SteelRecord.Steel.SteelID.like("%{}%".format(steelNo))).all()
+                if steel:
+                    if len(steel) > 1:
+                        print(" ID {} 不唯一".format(steelNo))
+                    steel = steel[index]
+                    return steel.SequeceNo
+                print("{} 无记录".format(steelNo))
+                return None
+            except:
+                session.rollback()
 
     def getSteelInfo(self,steelNo):
         """
@@ -272,6 +262,5 @@ class SqlServer_3d0(DataBaseInterFace):
         Returns:
             list: A list of dictionaries representing the steel records.
         """
-        from bkjc_database.NerCarDataBase.sqlserver import SteelRecord
         steels = SteelRecord.getSteelBySteelId(steelNo)
         return [SqlTool.to_dict(st) for st in steels]

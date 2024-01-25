@@ -4,28 +4,32 @@
 自动映射 DWQueue 数据库
 """
 from bkjc_database.NerCarDataBase.BaseImport import *
+from bkjc_database.NerCarDataBase.SqlBase import init
 
-if driveType == "mysql":
-    from .mysqlModels.DWDiagnostics import *
-else:
-    pass
 databaseName = "DWDiagnostics"
+
 engine: Engine
 Base: automap_base
 Session: sessionmaker
-session: Session
+__Session__: Session
 inspector: Inspector
 table_names: list
 
+def get_db():
+    db = __Session__()
+    try:
+        yield db
+    finally:
+        db.close()
 
 def dbInit():
-    global engine, Base, Session, session, inspector, table_names
-    engine, Base, Session, session, inspector = init(databaseName)
+    global engine, Base, __Session__, session, inspector, table_names
+    engine, Base, __Session__, session, inspector = init(databaseName)
     table_names = inspector.get_table_names()
 
 
-if beforeInit:
-    dbInit()
+
+dbInit()
 
 def getTableList():
     pass

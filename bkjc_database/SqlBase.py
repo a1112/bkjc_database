@@ -18,7 +18,7 @@ from sqlalchemy.pool import QueuePool
 
 # import sqlacodegen  # 生成映射
 
-from bkjc_database.NerCarDataBase import core
+from bkjc_database import core, CONFIG
 
 modelPath = path.join(path.dirname(__file__), "sqlserver/models\\")
 connectDicts = defaultdict(dict)
@@ -27,9 +27,9 @@ connectDicts = defaultdict(dict)
 def get_engine(databaseName, baseUrl: str = None) -> Engine:
     """通过url 获取 engine """
     if not baseUrl:
-        baseUrl = core.baseUrl
+        baseUrl = CONFIG.baseUrl
     return create_engine(baseUrl.format(databaseName), poolclass=QueuePool, pool_size=100, max_overflow=20, pool_recycle=100, pool_pre_ping=True,
-                         echo=core.echo)
+                         echo=CONFIG.echo)
 
 
 def get_inspector(engine) -> Inspector:
@@ -37,23 +37,20 @@ def get_inspector(engine) -> Inspector:
     return inspect(engine)
 
 
-def init(databaseName: str, baseUrl=None, flush=False) -> (Engine, automap_base, sessionmaker, Session, Inspector):
+def init(databaseName: str, baseUrl=None, flush=False) -> (Engine, automap_base, sessionmaker, Inspector):
     """必要初始化"""
     connect = connectDicts[databaseName]
 
-    # if connect and not flush:
-    #     return connect["engine"], connect["Base"], connect["Session"], connect["session"], connect["inspector"]
     engine = get_engine(databaseName, baseUrl)
     tryConnect(engine)
     Base = automap_base()
     Base.prepare(engine, reflect=False)
     Session_ = sessionmaker(bind=engine, expire_on_commit=True)
-    session = Session_()
     inspector = get_inspector(engine)
     tables = getAllTableName(inspector)
-    connect["engine"], connect["Base"], connect["Session"], connect["session"], connect["inspector"], \
-    connect["tables"] = engine, Base, Session_, session, inspector, tables
-    return engine, Base, Session_, session, inspector
+    connect["engine"], connect["Base"], connect["Session"], connect["inspector"], \
+    connect["tables"] = engine, Base, Session_,inspector, tables
+    return engine, Base, Session_,inspector
 
 
 def tryConnect(engine: Engine):

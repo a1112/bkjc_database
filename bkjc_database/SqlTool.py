@@ -3,7 +3,7 @@ import datetime
 import os
 from os import path
 
-from bkjc_database.NerCarDataBase import core
+from bkjc_database import core
 
 modelPath = path.join(path.dirname(__file__), "sqlserver/models\\")
 

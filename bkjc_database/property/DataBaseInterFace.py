@@ -1,6 +1,9 @@
 from abc import ABC, abstractmethod
 
+from pypattyrn.creational.singleton import Singleton
 
+from bkjc_database.SqlBase import init
+from bkjc_database.BaseImport import *
 class DataBaseInterFace(ABC):
 
     @abstractmethod
@@ -8,15 +11,15 @@ class DataBaseInterFace(ABC):
         ...
 
     @abstractmethod
-    def getSteelByNum(self,number, defectOnly, startID=None):
+    def getSteelByNum(self, number, defectOnly=False, startID=None):
         ...
 
     @abstractmethod
-    def getSteelById(self,steelId):
+    def getSteelById(self, steelId):
         ...
 
     @abstractmethod
-    def getSteelBySeqNo(self,seqNo):
+    def getSteelBySeqNo(self, seqNo):
         ...
 
     @abstractmethod
@@ -40,7 +43,7 @@ class DataBaseInterFace(ABC):
         ...
 
     @abstractmethod
-    def getDefectItem(self,cameraId,defectId):
+    def getDefectItem(self, cameraId, defectId):
         ...
 
     @abstractmethod
@@ -58,3 +61,19 @@ class DataBaseInterFace(ABC):
             None
         """
         ...
+
+
+class DbItem(metaclass=Singleton):
+
+    def __init__(self,databaseName):
+        self.engine: Engine = None
+        self.Base: automap_base = None
+        self.Session: sessionmaker = None
+        self.inspector: Inspector = None
+        self.table_names: list = []
+        self.databaseName = databaseName
+        self.dbInit()
+
+    def dbInit(self):
+        self.engine, self.Base, self.Session, self.inspector = init(self.databaseName)
+        self.table_names = self.inspector.get_table_names()

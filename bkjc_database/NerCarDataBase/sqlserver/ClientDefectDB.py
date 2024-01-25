@@ -8,38 +8,23 @@ from typing import List
 import logging
 
 from . import ConfigCenter, master
-from bkjc_database.NerCarDataBase.BaseImport import *
+from bkjc_database.BaseImport import *
 from .models.ClientDefectDB1 import *
-from ..SqlBase import init
+from ...property.DataBaseInterFace import DbItem
 
 baseDB_name = "ClientDefectDB"
 
-engine: Engine
-Base: automap_base
-Session: sessionmaker
-session: Session
-inspector: Inspector
-table_names: list
 
-
-class ClientDefectDB:
+class ClientDefectDB(DbItem):
     """
     相机数据库存在N个，无法使用传统的自动映射
     某个相机数据库将会实例该类
     """
 
-    def __init__(self, DataBaseName: str, is_up: False):
-        self.DataBaseName: str = DataBaseName
-        self.engine:Engine
-        self.session:sessionmaker
-        self.engine, self.Base, self.Session, self.session, self.inspector = init(DataBaseName)
+    def __init__(self, dataBaseName: str, is_up: False):
+        super().__init__(dataBaseName)
+        self.DataBaseName: str = dataBaseName
         self.is_up = is_up
-
-    def __repr__(self):
-        """
-        命名输出
-        """
-        return self.DataBaseName + self.__module__ + hex(id(self))
 
 
 __CameraDict__ = {}
@@ -48,41 +33,21 @@ underCamera: List[ClientDefectDB] = []  # 下表相机数据库
 allCamera: List[ClientDefectDB]
 
 
-def dbInit():
-    # global engine, Base, Session, session, inspector, table_names
-    # engine, Base, Session, session, inspector = init(baseDB_name+"0")
-    # table_names = inspector.get_table_names()
-    global allCamera
-    for index in ConfigCenter.upCameraIdList:
-        DB_name = baseDB_name + str(index)
-        if DB_name not in master.database_names:
-            logging.error("{} 缺陷数据库未定义，请检查数据库是否配置正确".format(DB_name))
-        else:
-            __CameraDict__[index] = ClientDefectDB(DB_name, True)
-            upCamera.append(__CameraDict__[index])
-    for index in ConfigCenter.underCameraIdList:
-        DB_name = baseDB_name + str(index)
-        if DB_name not in master.database_names:
-            logging.error("{} 缺陷数据库未定义，请检查数据库是否配置正确".format(DB_name))
-        else:
-            __CameraDict__[index] = ClientDefectDB(DB_name, False)
-            underCamera.append(__CameraDict__[index])
-    allCamera = upCamera + underCamera
-
-
-def activateCamera(camera):
-    """
-    激活 对应的数据库
-    """
-    if isinstance(camera, int):
-        if camera not in __CameraDict__:
-            logging.error("无法激活 {}".format(baseDB_name + str(camera)))
-            return False
-        return activateCamera(__CameraDict__[camera])
-    global engine, Base, Session, session, inspector
-    engine, Base, Session, session, inspector = camera.engine, camera.Base, camera.Session, camera.session, camera.inspector
-    return True
-
+for index in ConfigCenter.upCameraIdList:
+    DB_name = baseDB_name + str(index)
+    if DB_name not in master.database_names:
+        logging.error("{} 缺陷数据库未定义，请检查数据库是否配置正确".format(DB_name))
+    else:
+        __CameraDict__[index] = ClientDefectDB(DB_name, True)
+        upCamera.append(__CameraDict__[index])
+for index in ConfigCenter.underCameraIdList:
+    DB_name = baseDB_name + str(index)
+    if DB_name not in master.database_names:
+        logging.error("{} 缺陷数据库未定义，请检查数据库是否配置正确".format(DB_name))
+    else:
+        __CameraDict__[index] = ClientDefectDB(DB_name, False)
+        underCamera.append(__CameraDict__[index])
+allCamera = upCamera + underCamera
 
 def getDefectBySequeceNo(steel_ID):
     """获取所有的 Steel 列 """
@@ -94,6 +59,10 @@ def getUpDefectBySequeceNo(steel_ID) -> List[Defect]:
     获取上表 缺陷
     """
     re_data = []
+    for cameraDb in upCamera:
+        with cameraDb.Session() as session:
+            re_data.extend(session.query(Defect).filter(Defect.SteelNo == steel_ID))
+        re_data.extend(cameraDb.session.query(Defect).filter(Defect.SteelNo == steel_ID))
     [re_data.extend(ds) for ds in
      [cameraDb.session.query(Defect).filter(Defect.SteelNo == steel_ID) for cameraDb in upCamera]]
     return re_data
@@ -155,5 +124,4 @@ def getDefectInfoBySequeceNo(sequeceNo) -> dict:
     return re_dict
 
 
-dbInit()
 
