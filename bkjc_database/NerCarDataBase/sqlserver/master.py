@@ -2,7 +2,7 @@
 """
 SQL server 系统表
 """
-
+from sqlalchemy import text
 
 from bkjc_database.property.DataBaseInterFace import DbItem
 from bkjc_database.SqlBase import init  # , try_get_table
@@ -18,10 +18,7 @@ class Master(DbItem):
     def database_names(self):
         """数据库名称列表"""
         with self.Session() as session:
-            try:
-                return [database_name[0] for database_name in session.execute("SELECT name FROM sys.databases").fetchall()]
-            except:
-                session.rollback()
+            return [database_name[0] for database_name in session.execute(text("SELECT name FROM sys.databases")).fetchall()]
 
 
 database_names = Master().database_names

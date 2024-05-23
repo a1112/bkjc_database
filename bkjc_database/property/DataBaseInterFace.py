@@ -11,7 +11,7 @@ class DataBaseInterFace(ABC):
         ...
 
     @abstractmethod
-    def getSteelByNum(self, number, defectOnly=False, startID=None):
+    def getSteelByNum(self, number, defectOnly=False, startID=None,desc=True):
         ...
 
     @abstractmethod
@@ -63,7 +63,7 @@ class DataBaseInterFace(ABC):
         ...
 
 
-class DbItem(metaclass=Singleton):
+class DbItem:
 
     def __init__(self,databaseName):
         self.engine: Engine = None

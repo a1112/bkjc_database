@@ -12,7 +12,7 @@ class Mysql_4d0(DataBaseInterFace):
     def isSqlServer(self):
         return False
 
-    def getSteelByNum(self, number, defectOnly=False, startID=None):
+    def getSteelByNum(self, number, defectOnly=False, startID=None, desc=True):
         with Ncdhotstrip.Session() as session:
             try:
                 que = session.query(Ncdhotstrip.Steelrecord,
@@ -21,13 +21,17 @@ class Mysql_4d0(DataBaseInterFace):
                                                                    isouter=True)
                 if startID:
                     que = que.filter(Ncdhotstrip.Steelrecord.seqNo > startID)
+                if desc:
+                    ord_item = Ncdhotstrip.Steelrecord.seqNo.desc()
+                else:
+                    ord_item = Ncdhotstrip.Steelrecord.seqNo.asc()
                 if not defectOnly:
                     res = [[i_, j_] for i_, j_ in que.order_by(
-                        Ncdhotstrip.Steelrecord.seqNo.desc())[0:number]]
+                        ord_item)[0:number]]
                 else:
                     res = [[i_, j_] for i_, j_ in
                            que.filter(Ncdhotstrip.Steelrecord.defectNum > 0).order_by(
-                               Ncdhotstrip.Steelrecord.seqNo.desc())[0:number]]
+                               ord_item)[0:number]]
                 return res
             except:
                 session.rollback()

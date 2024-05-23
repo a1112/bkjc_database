@@ -33,7 +33,7 @@ class SqlServer_3d0(DataBaseInterFace):
     def isSqlServer(self):
         return True
 
-    def getSteelByNum(self, number, defectOnly=False, startID=None):
+    def getSteelByNum(self, number, defectOnly=False, startID=None, desc = True):
         """
         Retrieve a specified number of steel records.
 
@@ -41,7 +41,7 @@ class SqlServer_3d0(DataBaseInterFace):
             number (int): The number of steel records to retrieve.
             defectOnly (bool): Flag indicating whether to retrieve only records with defects.
             startID (int, optional): The starting ID for filtering the records. Defaults to None.
-
+            ord_item (bool, optional): Flag indicating whether to order the records in descending order. Defaults to True.
         Returns:
             list: A list of steel records, each represented as a list containing the steel object and its ID.
 
@@ -55,12 +55,18 @@ class SqlServer_3d0(DataBaseInterFace):
                 )
                 if startID:
                     que = que.filter(SteelRecord.Steel.ID > startID)
+
+                if desc:
+                    ord_item = SteelRecord.Steel.ID.desc()
+                else:
+                    ord_item = SteelRecord.Steel.ID.asc()
+
                 if not defectOnly:
-                    res = [[i_, j_] for i_, j_ in que.order_by(SteelRecord.Steel.ID.desc())[0:number]]
+                    res = [[i_, j_] for i_, j_ in que.order_by(ord_item)[0:number]]
                 else:
                     res = [[i_, j_] for i_, j_ in que.filter(
                         or_(SteelRecord.Steel.TopDefectNum > 0, SteelRecord.Steel.BottomDefectNum > 0)
-                    ).order_by(SteelRecord.Steel.ID.desc())[0:number]]
+                    ).order_by(ord_item)[0:number]]
                 return res
             except:
                 session.rollback()
