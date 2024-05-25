@@ -22,7 +22,7 @@ class DefectDb(DbItem):
                 session.rollback()
                 return None
 
-    def getLastDefect(self,cameraId):
+    def getLastDefect(self, cameraId):
         with self.Session() as session:
             try:
                 if cameraId == 1:
