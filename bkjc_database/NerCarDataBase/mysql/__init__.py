@@ -1,1 +1,1 @@
-from . import models, Ncdhotstrip,Ncdhotstripdefect
+from . import models, Ncdhotstrip,Ncdhotstripdefect, Ncdplatedevice

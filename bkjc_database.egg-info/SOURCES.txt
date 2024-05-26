@@ -19,6 +19,7 @@ bkjc_database/NerCarDataBase/SqlManage/ConfigCenter.py
 bkjc_database/NerCarDataBase/SqlManage/__init__.py
 bkjc_database/NerCarDataBase/mysql/Ncdhotstrip.py
 bkjc_database/NerCarDataBase/mysql/Ncdhotstripdefect.py
+bkjc_database/NerCarDataBase/mysql/Ncdplatedevice.py
 bkjc_database/NerCarDataBase/mysql/__init__.py
 bkjc_database/NerCarDataBase/mysql/defectinfodatabase.py
 bkjc_database/NerCarDataBase/mysql/models/__init__.py
