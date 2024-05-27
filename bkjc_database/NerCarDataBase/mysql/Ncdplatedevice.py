@@ -51,4 +51,5 @@ class DeviceDb(DbItem):
 
 
 deviceDb = DeviceDb()
+
 Session = deviceDb.Session
