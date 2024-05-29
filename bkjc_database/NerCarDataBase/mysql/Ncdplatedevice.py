@@ -50,4 +50,5 @@ class DeviceDb(DbItem):
             return lightDict
 
 
+deviceDb = DeviceDb()
 Session = DeviceDb().Session
