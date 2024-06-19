@@ -63,14 +63,14 @@ class SqlServer_3d0(DataBaseInterFace):
 
                 if not defectOnly:
                     # res = [[i_, j_] for i_, j_ in que.order_by(ord_item)[0:number]]
-                    res = [[i_, j_] for i_, j_ in que[0:number]][::-1]
+                    res = [[i_, j_] for i_, j_ in que.order_by(ord_item)[0:number]][::-1]
                 else:
                     # res = [[i_, j_] for i_, j_ in que.filter(
                     #     or_(SteelRecord.Steel.TopDefectNum > 0, SteelRecord.Steel.BottomDefectNum > 0)
                     # ).order_by(ord_item)[0:number]]
                     res = [[i_, j_] for i_, j_ in que.filter(
                         or_(SteelRecord.Steel.TopDefectNum > 0, SteelRecord.Steel.BottomDefectNum > 0)
-                    )[0:number]][::-1]
+                    ).order_by(ord_item)[0:number]][::-1]
                 return res[::-1]
             except:
                 session.rollback()

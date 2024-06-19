@@ -20,7 +20,6 @@ class Mysql_4d0(DataBaseInterFace):
                                     Ncdhotstrip.Rcvsteelprop).join(Ncdhotstrip.Rcvsteelprop,
                                                                    Ncdhotstrip.Rcvsteelprop.steelID == Ncdhotstrip.Steelrecord.steelID,
                                                                    isouter=False)
-                print(que)
                 if startID:
                     que = que.filter(Ncdhotstrip.Steelrecord.seqNo > startID)
                 if desc:
@@ -137,5 +136,5 @@ class Mysql_4d0(DataBaseInterFace):
                 return item
             return None
 
-    def getGradeInfo(self,seqNo):
+    def getGradeInfo(self, seqNo):
         pass
