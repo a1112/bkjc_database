@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 # core.setBaseUrl(ip="127.0.0.1", user="ARNTUSER", password="ARNTUSER", drive_="sqlserver",
 #                 chart='utf8')
 bkjc_database.CONFIG.database_type="Ncdplate"
-core.setBaseUrl(ip="127.0.0.1", user="root", password="nercar", drive_="mysql",
+core.setBaseUrl(ip="172.25.2.4２", user="root", password="nercar", drive_="mysql",
                 chart='utf8')
 
 from bkjc_database.dbm import dbm

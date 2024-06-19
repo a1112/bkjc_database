@@ -14,11 +14,13 @@ class Mysql_4d0(DataBaseInterFace):
 
     def getSteelByNum(self, number, defectOnly=False, startID=None, desc=True):
         with Ncdhotstrip.Session() as session:
+            print(session)
             try:
                 que = session.query(Ncdhotstrip.Steelrecord,
                                     Ncdhotstrip.Rcvsteelprop).join(Ncdhotstrip.Rcvsteelprop,
                                                                    Ncdhotstrip.Rcvsteelprop.steelID == Ncdhotstrip.Steelrecord.steelID,
-                                                                   isouter=True)
+                                                                   isouter=False)
+                print(que)
                 if startID:
                     que = que.filter(Ncdhotstrip.Steelrecord.seqNo > startID)
                 if desc:
@@ -46,7 +48,7 @@ class Mysql_4d0(DataBaseInterFace):
                 que = session.query(Ncdhotstrip.Steelrecord,
                                                 Ncdhotstrip.Steelrecord.steelID).join(Ncdhotstrip.Rcvsteelprop,
                                                                                       Ncdhotstrip.Steelrecord.steelID == Ncdhotstrip.Rcvsteelprop.steelID,
-                                                                                      isouter=True)
+                                                                                      isouter=False)
                 que = que.filter(seqNo == Ncdhotstrip.Steelrecord.seqNo)
                 return [[i_, j_] for i_, j_ in que.order_by(
                     Ncdhotstrip.Steelrecord.seqNo.desc())[0:100]]
@@ -61,7 +63,7 @@ class Mysql_4d0(DataBaseInterFace):
                 que = session.query(Ncdhotstrip.Steelrecord,
                                                 Ncdhotstrip.Steelrecord.steelID).join(Ncdhotstrip.Rcvsteelprop,
                                                                                       Ncdhotstrip.Steelrecord.steelID == Ncdhotstrip.Rcvsteelprop.steelID,
-                                                                                      isouter=True)
+                                                                                      isouter=False)
                 que = que.filter(steelNo == Ncdhotstrip.Steelrecord.steelID)
                 return [[i_, j_] for i_, j_ in que.order_by(
                     Ncdhotstrip.Steelrecord.seqNo.desc())[0:500]]
@@ -76,7 +78,7 @@ class Mysql_4d0(DataBaseInterFace):
                 que = session.query(Ncdhotstrip.Steelrecord,
                                                 Ncdhotstrip.Steelrecord.steelID).join(Ncdhotstrip.Rcvsteelprop,
                                                                                       Ncdhotstrip.Steelrecord.steelID == Ncdhotstrip.Rcvsteelprop.steelID,
-                                                                                      isouter=True)
+                                                                                      isouter=False)
                 que = que.filter(
                     and_(Ncdhotstrip.Steelrecord.detectTime >= fromDate, Ncdhotstrip.Steelrecord.detectTime <= toDate))
                 return [[i_, j_] for i_, j_ in que.order_by(
