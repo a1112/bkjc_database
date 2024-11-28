@@ -1,6 +1,6 @@
 from typing import List
+from bkjc_database.CONFIG import globDbConfig
 
-from bkjc_database.CONFIG import database_type
 
 from bkjc_database.BaseImport import *
 from bkjc_database.SqlBase import init
@@ -15,7 +15,7 @@ from bkjc_database.NerCarDataBase.mysql.models.ncdplatedevice import *
 
 class DeviceDb(DbItem):
     def __init__(self):
-        if database_type == "ncdhotstrip":
+        if globDbConfig.database_type == "ncdhotstrip":
             self.databaseName = "Ncdplatedevice"
         else:
             self.databaseName = "Ncdplatedevice"
@@ -51,4 +51,7 @@ class DeviceDb(DbItem):
 
 
 deviceDb = DeviceDb()
-Session = DeviceDb().Session
+Session = deviceDb.Session
+
+
+deviceDb.createDatabase(Base.metadata)

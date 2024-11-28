@@ -1,8 +1,8 @@
 from bkjc_database.property.DataBaseInterFace import DbItem
 
-from bkjc_database.CONFIG import database_type
+from bkjc_database.CONFIG import globDbConfig
 
-if database_type == "ncdhotstrip":
+if globDbConfig.database_type == "ncdhotstrip":
     databaseName = "Ncdhotstrip"
     from bkjc_database.NerCarDataBase.mysql.models.ncdhotstrip import *
 else:
@@ -38,8 +38,10 @@ class SteelDb(DbItem):
     def cameraNumber(self):
         return 4
 
+steelDb = SteelDb()
+underCameraIdList = steelDb.underCameraIdList
+upCameraIdList = steelDb.upCameraIdList
+allCamera = steelDb.allCamera
+Session = steelDb.Session
 
-underCameraIdList = SteelDb().underCameraIdList
-upCameraIdList = SteelDb().upCameraIdList
-allCamera = SteelDb().allCamera
-Session = SteelDb().Session
+steelDb.createDatabase(Base.metadata)

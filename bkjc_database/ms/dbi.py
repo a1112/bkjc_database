@@ -9,6 +9,7 @@ from bkjc_database.NerCarDataBase.mysql import Ncdhotstripdefect
 
 class Mysql_4d0(DataBaseInterFace):
 
+
     def isSqlServer(self):
         return False
 

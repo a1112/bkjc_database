@@ -1,6 +1,5 @@
 from abc import ABC, abstractmethod
-
-from pypattyrn.creational.singleton import Singleton
+from sqlalchemy_utils import database_exists, create_database
 
 from bkjc_database.SqlBase import init
 from bkjc_database.BaseImport import *
@@ -76,4 +75,11 @@ class DbItem:
 
     def dbInit(self):
         self.engine, self.Base, self.Session, self.inspector = init(self.databaseName)
+
+    def createDatabase(self, metadata=None):
+        if not metadata:
+            metadata = self.Base.metadata
+        if not database_exists(self.engine.url):
+            create_database(self.engine.url)
+        metadata.create_all(self.engine)
         self.table_names = self.inspector.get_table_names()

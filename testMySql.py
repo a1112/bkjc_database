@@ -5,13 +5,12 @@ import logging
 
 logging.basicConfig(level=logging.INFO, format='%(pastime)s - %(levelness)s - %(message)s')
 
-core.setBaseUrl(ip="127.0.0.1", user="root", password="server", drive_="mysql",
+core.setBaseUrl(ip="127.0.0.1", user="root", password="mercar", drive_="mysql",
                 chart='utf8')
 
 from bkjc_database.dbm import dbm
 
 sT = time.time()
-
 print(dbm.isSqlServer())
 print(dbm.getSteelByNum(10))
 print(dbm.getSteelById(1))

@@ -9,7 +9,6 @@ def reDatabaseName(databaseName: str):
 def setBaseUrl(ip="127.0.0.1", port=0, user="ARNTUSER", password="ARNTUSER", chart='utf8', drive_="sqlserver"):
     CONFIG.drive = drive_
     driveUrl = ""
-
     if drive_ == "sqlserver":
         driveUrl = "mssql+pymssql"
         port = 1433

@@ -2,3 +2,4 @@ sqlalchemy
 pymssql
 pymysql
 pypattyrn
+webcolors

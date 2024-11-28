@@ -1,11 +1,11 @@
-from bkjc_database.CONFIG import database_type
-from bkjc_database.NerCarDataBase.mysql.models.ncdhotstripdefect import Camdefect1, Camdefect2
+from bkjc_database.CONFIG import globDbConfig
+from bkjc_database.NerCarDataBase.mysql.models.ncdhotstripdefect import *
 from bkjc_database.property.DataBaseInterFace import DbItem
 
 
 class DefectDb(DbItem):
     def __init__(self):
-        if database_type == "ncdhotstrip":
+        if globDbConfig.database_type == "ncdhotstrip":
             self.databaseName = "ncdhotstripdefect"
         else:
             self.databaseName = "Ncdplatedefect"
@@ -33,5 +33,7 @@ class DefectDb(DbItem):
                 session.rollback()
                 return None
 
+defectDb = DefectDb()
+Session = defectDb.Session
 
-Session = DefectDb().Session
+defectDb.createDatabase(Base.metadata)

@@ -26,10 +26,12 @@ connectDicts = defaultdict(dict)
 
 def get_engine(databaseName, baseUrl: str = None) -> Engine:
     """通过url 获取 engine """
+    echo=False
     if not baseUrl:
-        baseUrl = CONFIG.baseUrl
+        baseUrl = CONFIG.globDbConfig.baseUrl
+        echo = CONFIG.globDbConfig.echo
     return create_engine(baseUrl.format(databaseName), poolclass=QueuePool, pool_size=100, max_overflow=20, pool_recycle=100, pool_pre_ping=True,
-                         echo=CONFIG.echo)
+                         echo=echo)
 
 
 def get_inspector(engine) -> Inspector:
