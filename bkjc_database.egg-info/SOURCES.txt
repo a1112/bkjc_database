@@ -23,6 +23,7 @@ bkjc_database/NerCarDataBase/mysql/Ncdplatedevice.py
 bkjc_database/NerCarDataBase/mysql/__init__.py
 bkjc_database/NerCarDataBase/mysql/defectinfodatabase.py
 bkjc_database/NerCarDataBase/mysql/models/__init__.py
+bkjc_database/NerCarDataBase/mysql/models/core.py
 bkjc_database/NerCarDataBase/mysql/models/defectinfodatabase.py
 bkjc_database/NerCarDataBase/mysql/models/ncdhotstrip.py
 bkjc_database/NerCarDataBase/mysql/models/ncdhotstripdefect.py

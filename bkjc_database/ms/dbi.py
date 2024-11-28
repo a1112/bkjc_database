@@ -9,9 +9,19 @@ from bkjc_database.NerCarDataBase.mysql import Ncdhotstripdefect
 
 class Mysql_4d0(DataBaseInterFace):
 
-
     def isSqlServer(self):
         return False
+
+    def addSteelrecord(self, steelrecord: Ncdhotstrip.Steelrecord):
+        with Ncdhotstrip.Session() as session:
+            session.add(steelrecord)
+            session.commit()
+
+    def addRcvsteelprop(self, rcvsteelprop: Ncdhotstrip.Rcvsteelprop):
+        with Ncdhotstrip.Session() as session:
+            session.add(rcvsteelprop)
+            session.commit()
+
 
     def getSteelByNum(self, number, defectOnly=False, startID=None, desc=True):
         with Ncdhotstrip.Session() as session:
