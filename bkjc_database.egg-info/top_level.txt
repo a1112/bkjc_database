@@ -1,2 +1,0 @@
-bkjc_database
-demo

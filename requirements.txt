@@ -2,6 +2,7 @@ sqlalchemy
 pymssql
 pymysql
 pypattyrn
-webcolors
-sqlalchemy_utils
 cryptography
+fastapi
+Pillow
+requests
