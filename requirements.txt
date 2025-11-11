@@ -3,3 +3,5 @@ pymssql
 pymysql
 pypattyrn
 webcolors
+sqlalchemy_utils
+cryptography

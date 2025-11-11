@@ -67,3 +67,10 @@ bkjc_database/property/__init__.py
 bkjc_database/ss/__init__.py
 bkjc_database/ss/dbc.py
 bkjc_database/ss/dbi.py
+demo/__init__.py
+demo/_demo_config.py
+demo/defect_overview.py
+demo/export_defect_classes.py
+demo/steel_timeline.py
+demo/testMySql.py
+demo/testSqlServer.py

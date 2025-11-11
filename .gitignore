@@ -1,2 +1,4 @@
-/bkjc_database.egg-info/
+/bkjc_database.egg-info
 /venv/
+
+/bkjc_database/build/

@@ -1,7 +1,7 @@
 # coding: utf-8
 from sqlalchemy import Column, DateTime, Integer, SmallInteger, text
 from sqlalchemy.dialects.mysql import TINYINT, VARCHAR
-
+from sqlalchemy.orm import declarative_base
 
 Base = declarative_base()
 metadata = Base.metadata
